@@ -17,7 +17,7 @@ import Link from "next/link"
 
 const Navbar = () => {
   return (
-    <div className="flex items-center justify-between py-4 px-8 bg-white">
+    <div className="flex sticky top-0 z-50 items-center justify-between py-4 px-8 bg-white">
       <h2 className="hidden laptop:block font-bold leading-4 text-lg">School Attendance</h2>
       <Sheet>
         <SheetTrigger><AlignLeft className="block laptop:hidden" size="32" color="black" /></SheetTrigger>

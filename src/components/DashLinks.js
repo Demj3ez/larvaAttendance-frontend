@@ -8,9 +8,9 @@ const DashLinks = () => {
     return (
         <div className="flex flex-col gap-10">
             <Link className={`link ${pathname === '/dashboard' ? 'text-[#F39B3B]' : 'text-black'} hover:text-orange-400`} href={'/dashboard'}>Mark Attendance</Link>
-            <Link className={`link ${pathname === '/dashboard1' ? 'text-[#F39B3B]' : 'text-black'} hover:text-orange-400`} href={'/dashboard1'}>Register Student</Link>
-            <Link className={`link ${pathname === '/dashboard2' ? 'text-[#F39B3B]' : 'text-black'} hover:text-orange-400`} href={'/dashboard2'}>Students List</Link>
-            <Link className={`link ${pathname === '/dashboard3' ? 'text-[#F39B3B]' : 'text-black'} hover:text-orange-400`} href={'/dashboard3'}>Settings</Link>
+            <Link className={`link ${pathname === '/dashboard/register' ? 'text-[#F39B3B]' : 'text-black'} hover:text-orange-400`} href={'/dashboard/register'}>Register Student</Link>
+            <Link className={`link ${pathname === '/dashboard/students' ? 'text-[#F39B3B]' : 'text-black'} hover:text-orange-400`} href={'/dashboard/students'}>Students List</Link>
+            <Link className={`link ${pathname === '/dashboard/settings' ? 'text-[#F39B3B]' : 'text-black'} hover:text-orange-400`} href={'/dashboard/settings'}>Settings</Link>
         </div>
     )
 }

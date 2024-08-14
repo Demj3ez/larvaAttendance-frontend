@@ -5,9 +5,9 @@ export default function DashboardLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <main className="flex bg-slate-200 w-screen min-h-screen h-screen">
+        <main className="flex bg-[#E6E6E6] min-h-screen h-full">
           <Sidebar />
-          <div className="flex-1 flex flex-col">
+          <div className="laptop:ml-[252px] w-full flex flex-col">
             <Navbar />
             {children}
           </div>
