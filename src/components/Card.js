@@ -1,12 +1,12 @@
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Bold, Italic, Underline } from "lucide-react"
 
 const Cardy = (props) => {
   return (
     <Card className="flex flex-col justify-center items-center bg-white rounded-3xl w-48 h-48 shadow-md">
-        <Avatar className="p-7 mb-2 bg-slate-300">
+        <Avatar className="mb-2 bg-slate-300 w-12 h-12">
             <AvatarImage src={props.src} alt="student picture" />
             <AvatarFallback>CN</AvatarFallback>
         </Avatar>

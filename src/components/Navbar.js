@@ -40,7 +40,7 @@ const Navbar = () => {
           <p className="text-md font-semibold">Praise Akintayo</p>
           <p className="text-sm">Web Development</p>
         </div>
-        <Avatar>
+        <Avatar className="w-10 h-10">
           <AvatarImage src="https://github.com/shadcn.png" />
           <AvatarFallback className="bg-gray-100" >CN</AvatarFallback>
         </Avatar>
