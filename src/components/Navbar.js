@@ -24,7 +24,7 @@ const Navbar = () => {
         <SheetContent side="left" className="w-[250px] tablet:w-[300px] bg-white flex flex-col justify-between">
           <SheetHeader>
             <SheetTitle className='mb-32'>
-              <Image src="/images/larvaLogo.png" className="object-contain" alt="larva logo" width={100} height={100}/>
+              <Image src="/images/larvaLogo.png" className="w-auto h-auto" alt="larva logo" width={100} height={100}/>
             </SheetTitle>
             <SheetDescription className='flex text-left'>
               <DashLinks />

@@ -16,6 +16,8 @@ import { Input } from "@/components/ui/input"
 import { useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import axios from "axios"
+import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -25,6 +27,7 @@ const formSchema = z.object({
 })
 
 export function LoginForm() {
+  const router = useRouter()
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,8 +40,12 @@ export function LoginForm() {
   const { isDirty, isValid, isSubmitting, isSubmitSuccessful } = form.formState
  
   const onSubmit = (values) => {
-    console.log(values)
-
+    try {
+      axios.post("http://localhost:3500/api/v1/tutor/login", values, { withCredentials: true })
+      router.push('/dashboard')
+    } catch (error) {
+      console.log(error.message)
+    }
   }
 
   useEffect(()=>{
@@ -51,7 +58,7 @@ export function LoginForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 px-10 w-[417px] flex flex-col m-auto">
         <div className="mb-3 space-y-3">
-          <Image src="/images/larvaLogo.png" className="object-contain" alt="larva logo" width={100} height={100}/>
+          <Image src="/images/larvaLogo.png" className="w-auto h-auto" alt="larva logo" width={100} height={100}/>
           <h1 className="font-semibold">Log in to your account</h1>          
         </div>
         <FormField
