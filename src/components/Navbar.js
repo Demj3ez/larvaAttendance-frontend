@@ -12,10 +12,13 @@ import {
 import DashLinks from "./DashLinks";
 import { LogOut } from "lucide-react"
 import Image from "next/image"
-import Link from "next/link"
 
 
-const Navbar = () => {
+const Navbar = ({user, logout}) => {
+  const nameArray = user.name.split(' ')
+  const iName = nameArray[0]?.[0] ?? ''
+  const sName = nameArray[1]?.[0] ?? ''
+
   return (
     <div className="flex sticky top-0 z-50 items-center justify-between py-4 px-8 bg-white">
       <h2 className="hidden laptop:block font-bold leading-4 text-lg">School Attendance</h2>
@@ -31,18 +34,18 @@ const Navbar = () => {
             </SheetDescription>
           </SheetHeader>
           <SheetFooter>
-            <Link href="/logout" className="hover:text-gray-600 flex gap-4 items-center"><LogOut size={20} />Logout</Link>
+            <button onClick={logout} className="hover:text-gray-600 flex gap-4 items-center"><LogOut size={20} />Logout</button>
           </SheetFooter>
         </SheetContent>
       </Sheet>
-      <div className="flex gap-8 items-center">
-        <div className="flex flex-col justify-end items-end">
-          <p className="text-md font-semibold">Praise Akintayo</p>
-          <p className="text-sm">Web Development</p>
+      <div className="flex gap-4 items-center">
+        <div className="flex flex-col justify-end items-start">
+          <p className="text-md font-semibold">{user.name}</p>
+          <p className="text-sm">{user.course}</p>
         </div>
-        <Avatar className="w-10 h-10">
+        <Avatar className="w-10 laptop:w-12 h-10 laptop:h-12">
           <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback className="bg-gray-100" >CN</AvatarFallback>
+          <AvatarFallback className="bg-yellow-400 text-lg font-bold" >{iName}{sName}</AvatarFallback>
         </Avatar>
       </div>
     </div>

@@ -56,6 +56,7 @@ export function LoginForm() {
 
   return (
     <Form {...form}>
+      <div className="flex flex-col m-auto">
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 px-10 w-[417px] flex flex-col m-auto">
         <div className="mb-3 space-y-3">
           <Image src="/images/larvaLogo.png" className="w-auto h-auto" alt="larva logo" width={100} height={100}/>
@@ -86,8 +87,9 @@ export function LoginForm() {
           )}
         />
         <Button className="bg-[#F39B3B] hover:bg-orange-400 text-white rounded-lg" type="submit" disabled={!isDirty || !isValid} >{isSubmitting ? "Loading..." : "Log in as Tutor"}</Button>
-        <Link href={'/admin/login'} className="text-center text-sm hover:text-slate-600 text-black">Login as SuperAdmin</Link>
       </form>
+      <Link href={'/admin/login'} className="text-center text-xs hover:text-slate-600 text-black font-bold mt-3">Admin</Link>
+      </div>
     </Form>
   )
 }
