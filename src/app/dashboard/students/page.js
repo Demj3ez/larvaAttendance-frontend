@@ -1,12 +1,4 @@
-import { DatePicker } from "@/components/DatePicker";
 import { ListFilter } from 'lucide-react';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-  } from "@/components/ui/select";
 import SearchBar from "@/components/Search";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -17,8 +9,38 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import CourseFilter from "@/components/CourseFilter";
+import CohortFilter from "@/components/CohortFilter";
 
-const page = () => {
+
+const fetchStudent = async () =>{
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/students`, { cache: "no-store"});
+  if(!response.ok){
+    throw new Error("Unable to fetch data")
+  }
+  return response.json()
+}
+
+const page = async ({searchParams}) => {
+  const query = searchParams?.query || '';
+  const course = searchParams?.course || '';
+  const cohort = searchParams?.cohort || '';
+
+  const students = await fetchStudent();
+
+  const filteredStudent = Array.isArray(students) ? students.filter((student) =>{
+    if(student.name.toLowerCase().includes(query.toLowerCase())){
+        return true;
+    }
+    if(student.course === course){
+        return true;
+    }
+    if(student.cohort === cohort){
+        return true;
+    }
+    return false;
+  }) : [];
+  
   return (
     <>
     <section className="py-4 px-6" >
@@ -27,33 +49,8 @@ const page = () => {
         <div className="space-y-6">
             <div className="flex gap-2 items-center"><SearchBar /><ListFilter className="mx-8 text-orange-500"  size={28}/></div>
             <div className="flex flex-wrap gap-5 laptop:gap-10 justify-start">
-                <DatePicker />
-                <Select>
-                    <SelectTrigger className="w-[250px] bg-white shadow-md hover:bg-orange-50">
-                        <SelectValue placeholder="Select Course" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white">
-                        <SelectItem value="cs">Cyber Security</SelectItem>
-                        <SelectItem value="da">Data Analysis</SelectItem>
-                        <SelectItem value="fe">Frontend Development</SelectItem>
-                        <SelectItem value="be">Backend Development</SelectItem>
-                        <SelectItem value="md">Mobile Development</SelectItem>
-                        <SelectItem value="uud">UIUX Design</SelectItem>
-                    </SelectContent>
-                </Select>
-                <Select>
-                    <SelectTrigger className="w-[180px] bg-white shadow-md hover:bg-orange-50">
-                        <SelectValue placeholder="Select Cohort" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white">
-                        <SelectItem value="c1">Cohort 1</SelectItem>
-                        <SelectItem value="c2">Cohort 2</SelectItem>
-                        <SelectItem value="c3">Cohort 3</SelectItem>
-                        <SelectItem value="c4">Cohort 4</SelectItem>
-                        <SelectItem value="c5">Cohort 5</SelectItem>
-                        <SelectItem value="c6">Cohort 6</SelectItem>
-                    </SelectContent>
-                </Select>
+                <CourseFilter />
+                <CohortFilter />
             </div>
         </div>
     </div>
@@ -69,21 +66,13 @@ const page = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell className="text-left text-nowrap">Praise Akintayo</TableCell>
-            <TableCell className="text-center text-nowrap">Web development</TableCell>
-            <TableCell className="text-center text-nowrap">2</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="text-left text-nowrap">Praise Akintayo</TableCell>
-            <TableCell className="text-center text-nowrap">Web development</TableCell>
-            <TableCell className="text-center text-nowrap">2</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="text-left text-nowrap">Praise Akintayo</TableCell>
-            <TableCell className="text-center text-nowrap">Web development</TableCell>
-            <TableCell className="text-center text-nowrap">2</TableCell>
-          </TableRow>
+          {Array.isArray(students) && filteredStudent.map(student =>(
+            <TableRow key={student._id}>
+              <TableCell className="text-left text-nowrap">{student.name}</TableCell>
+              <TableCell className="text-center text-nowrap">{student.course}</TableCell>
+              <TableCell className="text-center text-nowrap">{student.cohort}</TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </section>

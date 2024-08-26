@@ -1,4 +1,6 @@
 import { DatePicker } from "@/components/DatePicker";
+import CourseFilter from "@/components/CourseFilter";
+import CohortFilter from "@/components/CohortFilter";
 import { ListFilter } from 'lucide-react';
 import {
     Select,
@@ -12,8 +14,39 @@ import { Separator } from "@/components/ui/separator";
 import Drop from "@/components/Drop";
 import Cardy from "@/components/Card";
   
+const fetchStudent = async () =>{
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/students`, { cache: "no-store"});
+    if(!response.ok){
+      throw new Error("Unable to fetch data")
+    }
+    return response.json()
+  }
 
-const page = () => {
+const page = async ({searchParams}) => {
+    const query = searchParams?.query || '';
+    const date = searchParams?.date || '';
+    const course = searchParams?.course || '';
+    const cohort = searchParams?.cohort || '';
+
+    const students = await fetchStudent();
+
+    const filteredStudent = Array.isArray(students) ? students.filter((student) =>{
+        if(student.name.toLowerCase().includes(query.toLowerCase())){
+            return true;
+        }
+        if(student.course === course){
+            return true;
+        }
+        if(student.cohort === cohort){
+            return true;
+        }
+        if (student?.attendance && Array.isArray(student.attendance)) {
+            student.attendance.find((attendance) => attendance.date === date)
+            return true;
+        }
+        return false;
+    }) : [];
+
   return (
     <>
     <section className="py-4 px-6" >
@@ -25,32 +58,10 @@ const page = () => {
                 <DatePicker />
                 <Drop />
                 <div className="hidden laptop:flex justify-between gap-10">
-                <Select>
-                    <SelectTrigger className="w-[250px] bg-white shadow-md hover:bg-orange-50">
-                        <SelectValue placeholder="Select Course" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white">
-                        <SelectItem value="cs">Cyber Security</SelectItem>
-                        <SelectItem value="da">Data Analysis</SelectItem>
-                        <SelectItem value="fe">Frontend Development</SelectItem>
-                        <SelectItem value="be">Backend Development</SelectItem>
-                        <SelectItem value="md">Mobile Development</SelectItem>
-                        <SelectItem value="uud">UIUX Design</SelectItem>
-                    </SelectContent>
-                </Select>
-                <Select>
-                    <SelectTrigger className="w-[180px] bg-white shadow-md hover:bg-orange-50">
-                        <SelectValue placeholder="Select Cohort" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white">
-                        <SelectItem value="c1">Cohort 1</SelectItem>
-                        <SelectItem value="c2">Cohort 2</SelectItem>
-                        <SelectItem value="c3">Cohort 3</SelectItem>
-                        <SelectItem value="c4">Cohort 4</SelectItem>
-                        <SelectItem value="c5">Cohort 5</SelectItem>
-                        <SelectItem value="c6">Cohort 6</SelectItem>
-                    </SelectContent>
-                </Select>
+                <div className="flex flex-wrap gap-5 laptop:gap-10 justify-start">
+                    <CourseFilter />
+                    <CohortFilter />
+                </div>
                 <Select>
                     <SelectTrigger className="w-[200px] bg-white shadow-md hover:bg-orange-50">
                         <SelectValue placeholder="Bulk Action" />
@@ -69,13 +80,9 @@ const page = () => {
     <Separator className="my-4 bg-gray-300 opacity-90 shadow-md" />
     <section className="mt-3 mb-10 px-6">
         <div className="grid grid-cols-2 tablet:grid-cols-3 laptop:grid-cols-4 gap-10 justify-items-center laptop:justify-items-start">
-            <Cardy name="Praise" course="Cyber Security" />
-            <Cardy name="Praise" course="Cyber Security" />
-            <Cardy name="Praise" course="Cyber Security" />
-            <Cardy name="Praise" course="Cyber Security" />
-            <Cardy name="Praise" course="Cyber Security" />
-            <Cardy name="Praise" course="Cyber Security" />
-            <Cardy name="Praise" course="Cyber Security" />
+            {Array.isArray(students) && filteredStudent.map(student =>(
+                <Cardy key={student._id} student={student} />
+            ))}
         </div>
     </section>
     </>

@@ -27,7 +27,7 @@ export default function DashboardLayout({ children }) {
   const logout = async (e) =>{
     e.preventDefault()
     try {
-      await axios.get('http://localhost:3500/api/v1/tutor/logout')
+      await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/tutor/logout`)
       router.push('/')
     } catch (error) {
       console.log(error.message)
@@ -47,7 +47,7 @@ export default function DashboardLayout({ children }) {
 
 async function getUser() {
   try {
-    const { data } = await axios.get('http://localhost:3500/api/v1/tutor/auth/status', { withCredentials: true })
+    const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/tutor/auth/status`, { withCredentials: true })
     return {
       user: data,
       error: null,

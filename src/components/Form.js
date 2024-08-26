@@ -41,7 +41,7 @@ export function LoginForm() {
  
   const onSubmit = (values) => {
     try {
-      axios.post("http://localhost:3500/api/v1/tutor/login", values, { withCredentials: true })
+      axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tutor/login`, values, { withCredentials: true })
       router.push('/dashboard')
     } catch (error) {
       console.log(error.message)
