@@ -1,41 +1,39 @@
 "use client"
 
-import { useState, useEffect } from 'react';
-import { useSearchParams } from "next/navigation";
-import { useRouter, usePathname } from "next/navigation";
-import { useDebouncedCallback } from 'use-debounce';
-import { format } from "date-fns"
+import { useState } from 'react';
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { format, parse } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 export function DatePicker() {
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams()
   const  pathname = usePathname()
   const { replace } = useRouter()
 
-  const [date, setDate] = useState(new Date())
+  const initialDate = searchParams.get('date')
+    ? parse(searchParams.get('date'), 'dd-MM-yyyy', new Date())
+    : new Date();
 
-  useEffect(() => {
-    setDate(searchParams.get('date') || '');
-  }, [searchParams]);
+  const [date, setDate] = useState(initialDate);
 
-  const handleDateChange =  useDebouncedCallback((value) =>{
-      setDate(value)
-      const params = new URLSearchParams(searchParams)
-      if(date){
-          params.set('date', date)
-      } else{
-          params.delete('date')
-      }
-      replace(`${pathname}?${params.toString()}`)
-  }, 200, [searchParams, pathname, replace])
+  const handleDateChange = (selectedDate) => {
+    if (selectedDate) {
+      setDate(selectedDate);
+      const formattedDate = format(selectedDate, 'dd-MM-yyyy');
+      const params = new URLSearchParams(searchParams);
+      params.set('date', formattedDate);
+      replace(`${pathname}?${params.toString()}`);
+    } else {
+      setDate(null);
+      const params = new URLSearchParams(searchParams);
+      params.delete('date');
+      replace(`${pathname}?${params.toString()}`);
+    }
+  };
 
 
   return (
@@ -48,7 +46,7 @@ export function DatePicker() {
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4 text-orange-500" />
-          {date ? format(date, "dd-MM-yyyy") : <span>Select Date</span>}
+          {date ? format(date, 'dd-MM-yyyy') : <span>Select Date</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0 bg-white">

@@ -16,21 +16,28 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useEffect } from "react";
 import { User } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import axios from "axios"
 
 const formSchema = z.object({
   name: z.string({ message: "Enter a student name" }),
-  studentnumber: z.number().min(4, {
-    message: "Student number must be a number",
-  }),
+  studentnumber: z.preprocess(
+    (value) => Number(value),
+    z.number().min(4, {
+      message: "Student number must be at least 4 digits",
+    })
+  ),
   course: z.string({ message: "Enter student course" }),
-  cohort: z.number({ message: "Enter student cohort" }),
+  cohort: z.preprocess(
+    (value) => Number(value),
+    z.number({ message: "Enter student cohort" })
+  ),
 })
 
 export function RegForm() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      image: "",
       name: "",
       studentnumber: "",
       course: "",
@@ -41,9 +48,14 @@ export function RegForm() {
   const { reset } = form
   const { isDirty, isValid, isSubmitting, isSubmitSuccessful } = form.formState
  
-  const onSubmit = (values) => {
+  const onSubmit = async (values) => {
     console.log(values)
-
+    try {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/student/register`, values)
+      console.log('posted successfully')
+    } catch (error) {
+      console.log(error.message)
+    }
   }
 
   useEffect(()=>{
@@ -60,7 +72,7 @@ export function RegForm() {
           <AvatarImage  src="https://github.com/shadcn.png" />
           <AvatarFallback className="bg-gray-100" ><User color="black" size={40} /></AvatarFallback>
         </Avatar>
-        <FormField
+        {/* <FormField
           control={form.control}
           name="image"
           render={({ field }) => (
@@ -71,7 +83,7 @@ export function RegForm() {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         </div>
         <FormField
           control={form.control}
@@ -102,9 +114,21 @@ export function RegForm() {
           name="course"
           render={({ field }) => (
             <FormItem>
-              <FormControl>
-                <Input className="bg-slate-100 rounded-md mb-2" placeholder="Course" {...field} />
-              </FormControl>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger className="bg-slate-100 rounded-md mb-2">
+                      <SelectValue placeholder="Select Course" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent className="bg-slate-100">
+                    <SelectItem value="Cyber Security">Cyber Security</SelectItem>
+                    <SelectItem value="Data Analysis">Data Analysis</SelectItem>
+                    <SelectItem value="Frontend Development">Frontend Development</SelectItem>
+                    <SelectItem value="Backend Development">Backend Development</SelectItem>
+                    <SelectItem value="Mobile Development">Mobile Development</SelectItem>
+                    <SelectItem value="UIUX Design">UIUX Design</SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

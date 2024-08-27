@@ -24,21 +24,17 @@ const fetchStudent = async () =>{
 const page = async ({searchParams}) => {
   const query = searchParams?.query || '';
   const course = searchParams?.course || '';
-  const cohort = searchParams?.cohort || '';
+  const cohortParam = searchParams?.cohort || 'all';
+  const cohort = cohortParam !== 'all' ? Number(cohortParam) : null;
 
   const students = await fetchStudent();
 
   const filteredStudent = Array.isArray(students) ? students.filter((student) =>{
-    if(student.name.toLowerCase().includes(query.toLowerCase())){
-        return true;
-    }
-    if(student.course === course){
-        return true;
-    }
-    if(student.cohort === cohort){
-        return true;
-    }
-    return false;
+    const matchesQuery = query ? student.name.toLowerCase().includes(query.toLowerCase()) : true;
+    const matchesCourse = course ? student.course === course : true;
+    const matchesCohort = cohort ? cohort !== null && student.cohort === cohort : true;
+      
+    return matchesQuery && matchesCourse && matchesCohort;
   }) : [];
   
   return (
@@ -66,7 +62,7 @@ const page = async ({searchParams}) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {Array.isArray(students) && filteredStudent.map(student =>(
+          {filteredStudent.map(student =>(
             <TableRow key={student._id}>
               <TableCell className="text-left text-nowrap">{student.name}</TableCell>
               <TableCell className="text-center text-nowrap">{student.course}</TableCell>

@@ -2,17 +2,11 @@ import { DatePicker } from "@/components/DatePicker";
 import CourseFilter from "@/components/CourseFilter";
 import CohortFilter from "@/components/CohortFilter";
 import { ListFilter } from 'lucide-react';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-  } from "@/components/ui/select";
 import SearchBar from "@/components/Search";
 import { Separator } from "@/components/ui/separator";
 import Drop from "@/components/Drop";
 import Cardy from "@/components/Card";
+import BulkAction from "@/components/BulkAction";
   
 const fetchStudent = async () =>{
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/students`, { cache: "no-store"});
@@ -26,25 +20,22 @@ const page = async ({searchParams}) => {
     const query = searchParams?.query || '';
     const date = searchParams?.date || '';
     const course = searchParams?.course || '';
-    const cohort = searchParams?.cohort || '';
+    const cohortParam = searchParams?.cohort || 'all';
+    const cohort = cohortParam !== 'all' ? Number(cohortParam) : null;
 
     const students = await fetchStudent();
 
     const filteredStudent = Array.isArray(students) ? students.filter((student) =>{
-        if(student.name.toLowerCase().includes(query.toLowerCase())){
-            return true;
-        }
-        if(student.course === course){
-            return true;
-        }
-        if(student.cohort === cohort){
-            return true;
-        }
-        if (student?.attendance && Array.isArray(student.attendance)) {
-            student.attendance.find((attendance) => attendance.date === date)
-            return true;
-        }
-        return false;
+        const matchesQuery = query ? student.name.toLowerCase().includes(query.toLowerCase()) : true;
+        const matchesCourse = course ? student.course === course : true;
+        const matchesCohort = cohort ? cohort !== null && student.cohort === cohort : true;
+        const matchesAttendance = date
+          ? student.attendance && Array.isArray(student.attendance)
+            ? student.attendance.some((attendance) => attendance.date === date)
+            : false
+          : true;
+
+        return matchesQuery && matchesCourse && matchesCohort && matchesAttendance;
     }) : [];
 
   return (
@@ -62,16 +53,7 @@ const page = async ({searchParams}) => {
                     <CourseFilter />
                     <CohortFilter />
                 </div>
-                <Select>
-                    <SelectTrigger className="w-[200px] bg-white shadow-md hover:bg-orange-50">
-                        <SelectValue placeholder="Bulk Action" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white">
-                        <SelectItem value="present">Mark all as present</SelectItem>
-                        <SelectItem value="absent">Mark all as absent</SelectItem>
-                        <SelectItem value="left">Mark all as left</SelectItem>
-                    </SelectContent>
-                </Select>
+                <BulkAction />
                 </div>
             </div>
         </div>
@@ -80,7 +62,7 @@ const page = async ({searchParams}) => {
     <Separator className="my-4 bg-gray-300 opacity-90 shadow-md" />
     <section className="mt-3 mb-10 px-6">
         <div className="grid grid-cols-2 tablet:grid-cols-3 laptop:grid-cols-4 gap-10 justify-items-center laptop:justify-items-start">
-            {Array.isArray(students) && filteredStudent.map(student =>(
+            {filteredStudent.map(student =>(
                 <Cardy key={student._id} student={student} />
             ))}
         </div>

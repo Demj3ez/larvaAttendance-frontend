@@ -27,7 +27,7 @@ export default function DashboardLayout({ children }) {
   const logout = async (e) =>{
     e.preventDefault()
     try {
-      await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/tutor/logout`)
+      await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/tutor/logout`, { withCredentials: true })
       router.push('/')
     } catch (error) {
       console.log(error.message)

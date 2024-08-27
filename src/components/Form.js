@@ -39,9 +39,9 @@ export function LoginForm() {
   const { reset } = form
   const { isDirty, isValid, isSubmitting, isSubmitSuccessful } = form.formState
  
-  const onSubmit = (values) => {
+  const onSubmit = async (values) => {
     try {
-      axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tutor/login`, values, { withCredentials: true })
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tutor/login`, values, { withCredentials: true })
       router.push('/dashboard')
     } catch (error) {
       console.log(error.message)
