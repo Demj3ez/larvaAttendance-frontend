@@ -21,7 +21,7 @@ import axios from "axios"
 
 const formSchema = z.object({
   name: z.string({ message: "Enter a student name" }),
-  studentnumber: z.preprocess(
+  studentNumber: z.preprocess(
     (value) => Number(value),
     z.number().min(4, {
       message: "Student number must be at least 4 digits",
@@ -39,7 +39,7 @@ export function RegForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      studentnumber: "",
+      studentNumber: "",
       course: "",
       cohort: "",
     },
@@ -49,7 +49,6 @@ export function RegForm() {
   const { isDirty, isValid, isSubmitting, isSubmitSuccessful } = form.formState
  
   const onSubmit = async (values) => {
-    console.log(values)
     try {
       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/student/register`, values)
       console.log('posted successfully')
@@ -99,7 +98,7 @@ export function RegForm() {
         />
         <FormField
           control={form.control}
-          name="studentnumber"
+          name="studentNumber"
           render={({ field }) => (
             <FormItem>
               <FormControl>

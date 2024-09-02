@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,6 +16,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useEffect } from "react";
 import { User } from 'lucide-react';
+import { useUser } from './userContext';
+import axios from "axios";
 
 const formSchema = z.object({
   name: z.string({ message: "Enter your name" }),
@@ -23,21 +25,26 @@ const formSchema = z.object({
 })
 
 export function TabForm() {
+  const { userData } = useUser();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      image: "",
-      name: "",
-      course: "",
+      name: userData.name,
+      course: userData.course,
     },
   })
   
   const { reset } = form
   const { isDirty, isValid, isSubmitting, isSubmitSuccessful } = form.formState
+  const id = userData.id
  
-  const onSubmit = (values) => {
-    console.log(values)
-
+  const onSubmit = async (values) => {
+    try {
+      await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/tutor/${id}`, values)
+      console.log('updated successfully')
+    } catch (error) {
+      console.log(error.message)
+    }
   }
 
   useEffect(()=>{
@@ -84,14 +91,26 @@ export function TabForm() {
           name="course"
           render={({ field }) => (
             <FormItem>
-              <FormControl>
-                <Input className="bg-slate-100 rounded-md mb-2" placeholder="Course" {...field} />
-              </FormControl>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger className="bg-slate-100 rounded-md mb-2">
+                      <SelectValue placeholder="Select Course" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent className="bg-slate-100">
+                    <SelectItem value="Cyber Security">Cyber Security</SelectItem>
+                    <SelectItem value="Data Analysis">Data Analysis</SelectItem>
+                    <SelectItem value="Frontend Development">Frontend Development</SelectItem>
+                    <SelectItem value="Backend Development">Backend Development</SelectItem>
+                    <SelectItem value="Mobile Development">Mobile Development</SelectItem>
+                    <SelectItem value="UIUX Design">UIUX Design</SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button className="bg-[#F39B3B] hover:bg-orange-400 text-white rounded-lg" type="submit" disabled={!isDirty || !isValid} >{isSubmitting ? "Loading..." : "Save"}</Button>
+        <Button className="bg-[#F39B3B] hover:bg-orange-400 text-white rounded-lg" type="submit" disabled={!isDirty || !isValid} >{isSubmitting ? "Updating..." : "Save"}</Button>
       </form>
     </Form>
   )

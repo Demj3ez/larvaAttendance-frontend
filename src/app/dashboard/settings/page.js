@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronRight } from 'lucide-react';
 
-const page = () => {
+const page = () => {  
   return (
     <>
       <section className="py-4 px-6" >

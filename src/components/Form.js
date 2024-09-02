@@ -88,7 +88,7 @@ export function LoginForm() {
         />
         <Button className="bg-[#F39B3B] hover:bg-orange-400 text-white rounded-lg" type="submit" disabled={!isDirty || !isValid} >{isSubmitting ? "Loading..." : "Log in as Tutor"}</Button>
       </form>
-      <Link href={'/admin/login'} className="text-center text-xs hover:text-slate-600 text-black font-bold mt-3">Admin</Link>
+      <Link href={'/admin/login'} className="text-center text-xs hover:text-slate-600 text-black font-semibold mt-3">Admin</Link>
       </div>
     </Form>
   )

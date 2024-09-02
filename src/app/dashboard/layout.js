@@ -1,10 +1,12 @@
 "use client"
+import React from "react";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Loader from "@/components/Loader";
+import { UserProvider } from "@/components/userContext";
 
 export default function DashboardLayout({ children }) {
   const [isSuccess, setisSuccess] = useState(false)
@@ -35,13 +37,15 @@ export default function DashboardLayout({ children }) {
   }
   
   return (
-    <main className="flex bg-[#E6E6E6] min-h-screen h-full">
-      <Sidebar logout={logout}/>
-      <div className="laptop:ml-[252px] w-full flex flex-col">
-        <Navbar user={userData} logout={logout} />
-        {children}
-      </div>
-    </main>
+    <UserProvider value={{ userData, setUserData }}>
+      <main className="flex bg-[#E6E6E6] min-h-screen h-full">
+        <Sidebar logout={logout}/>
+        <div className="laptop:ml-[252px] w-full flex flex-col">
+          <Navbar user={userData} logout={logout} />
+          {children}
+        </div>
+      </main>
+    </UserProvider>
   );
 }
 

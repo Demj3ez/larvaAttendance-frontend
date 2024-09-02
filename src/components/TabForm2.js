@@ -14,14 +14,20 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useEffect } from "react";
+import { useUser } from './userContext';
+import axios from "axios";
 
 const formSchema = z.object({
   currentpassword: z.string({ message: "Enter your current password" }),
   newpassword: z.string({ message: "Enter new password" }),
   confirmpassword: z.string({ message: "Confirm your new password" }),
+}).refine((data)=> data.newpassword === data.confirmpassword,{
+  message: "Passwords don't match",
+  path: ["confirmpassword"],
 })
 
 export function TabForm2() {
+  const { userData } = useUser();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -33,10 +39,15 @@ export function TabForm2() {
   
   const { reset } = form
   const { isDirty, isValid, isSubmitting, isSubmitSuccessful } = form.formState
+  const id = userData.id
  
-  const onSubmit = (values) => {
-    console.log(values)
-
+  const onSubmit = async (values) => {
+    try {
+      await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/tutor/updatepw/${id}`, values)
+      console.log('password updated successfully')
+    } catch (error) {
+      console.log(error.message)
+    }
   }
 
   useEffect(()=>{
@@ -84,7 +95,7 @@ export function TabForm2() {
             </FormItem>
           )}
         />
-        <Button className="bg-[#F39B3B] hover:bg-orange-400 text-white rounded-lg" type="submit" disabled={!isDirty || !isValid} >{isSubmitting ? "Loading..." : "Save"}</Button>
+        <Button className="bg-[#F39B3B] hover:bg-orange-400 text-white rounded-lg" type="submit" disabled={!isDirty || !isValid} >{isSubmitting ? "Updating password..." : "Save"}</Button>
       </form>
     </Form>
   )
