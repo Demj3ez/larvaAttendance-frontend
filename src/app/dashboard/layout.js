@@ -12,8 +12,9 @@ export default function DashboardLayout({ children }) {
   const [isSuccess, setisSuccess] = useState(false)
   const [userData, setUserData] = useState([])
   const router = useRouter()
-  useEffect(() => {(()=>{
-    const { user, error } = getUser()
+  useEffect(() => {(async()=>{
+    const { user, error } = await getUser()
+    console.log(user)
     if (error) {
       router.push('/')
       return;
