@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -41,10 +41,13 @@ export function LoginForm() {
  
   const onSubmit = async (values) => {
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tutor/login`, values, { withCredentials: true })
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tutor/login`, values);
+      localStorage.setItem('accessToken', response.data.accessToken);
+      toast("Login success")
       router.push('/dashboard')
     } catch (error) {
-      console.log(error.message)
+      const err = error.response.data.msg
+      toast(err);
     }
   }
 

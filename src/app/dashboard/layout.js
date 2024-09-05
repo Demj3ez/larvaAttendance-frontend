@@ -13,28 +13,27 @@ export default function DashboardLayout({ children }) {
   const [userData, setUserData] = useState([])
   const router = useRouter()
   useEffect(() => {(async()=>{
-    const { user, error } = await getUser()
-    console.log(user)
-    if (error) {
-      router.push('/')
-      return;
+    try {
+      const { user, error } = await getUser()
+      if (error) {
+        router.push('/')
+        return;
+      }
+      setisSuccess(true)
+      setUserData(user) 
+    } catch (error) {
+      router.push('/') 
     }
-    setisSuccess(true)
-    setUserData(user)
   })();
   }, [router]);
+
   if(!isSuccess){
     return <div className="flex w-full h-screen min-h-screen justify-center items-center m-auto"><Loader /></div>
   }
 
-  const logout = async (e) =>{
-    e.preventDefault()
-    try {
-      await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/tutor/logout`, { withCredentials: true })
-      router.push('/')
-    } catch (error) {
-      console.log(error.message)
-    }
+  function logout() {
+    localStorage.removeItem('accessToken');
+    window.location.href = '/';
   }
   
   return (
@@ -51,16 +50,25 @@ export default function DashboardLayout({ children }) {
 }
 
 async function getUser() {
+  const token = localStorage.getItem('accessToken'); 
+  if (!token) {
+      throw new Error('No token found');
+  }
+
   try {
-    const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/tutor/auth/status`, { withCredentials: true })
-    return {
-      user: data,
-      error: null,
-    }
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/tutor/auth/status`, {
+          headers: {
+              'Authorization': `Bearer ${token}`
+          }
+      });
+      return {
+        user: response.data,
+        error: null,
+      }
   } catch (error) {
     return {
-      user: null,
       error: error.message,
+      user: null,
     }
   }
 }
