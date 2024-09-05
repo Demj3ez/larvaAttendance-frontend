@@ -18,6 +18,8 @@ import { useEffect } from "react";
 import { User } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import axios from "axios"
+import { toast } from "sonner"
+import { Oval  } from 'react-loader-spinner'
 
 const formSchema = z.object({
   name: z.string({ message: "Enter a student name" }),
@@ -50,10 +52,11 @@ export function RegForm() {
  
   const onSubmit = async (values) => {
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/student/register`, values)
-      console.log('posted successfully')
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/student/register`, values)
+      toast(`${res.data.newStudent.name} registered successfully`)
     } catch (error) {
-      console.log(error.message)
+      const err = error.response.data.msg
+      toast(`Registration failed ${err}`)
     }
   }
 
@@ -144,7 +147,12 @@ export function RegForm() {
             </FormItem>
           )}
         />
-        <Button className="bg-[#F39B3B] hover:bg-orange-400 text-white rounded-lg" type="submit" disabled={!isDirty || !isValid} >{isSubmitting ? "Loading..." : "Register Student"}</Button>
+        <Button className="bg-[#F39B3B] hover:bg-orange-400 text-white rounded-lg" type="submit" disabled={!isDirty || !isValid} >
+          {isSubmitting 
+            ? <div className="flex gap-3 items-center justify-center"><Oval visible={true} height="18" width="18" color="white" ariaLabel="oval-loading" /> <p>Registering...</p></div>
+            : <div>Register Student</div>
+          }
+        </Button>
       </form>
     </Form>
   )

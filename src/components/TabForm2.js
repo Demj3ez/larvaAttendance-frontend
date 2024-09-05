@@ -16,6 +16,8 @@ import { Input } from "@/components/ui/input";
 import { useEffect } from "react";
 import { useUser } from './userContext';
 import axios from "axios";
+import { toast } from "sonner"
+import { Oval  } from 'react-loader-spinner'
 
 const formSchema = z.object({
   currentpassword: z.string({ message: "Enter your current password" }),
@@ -44,9 +46,10 @@ export function TabForm2() {
   const onSubmit = async (values) => {
     try {
       await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/tutor/updatepw/${id}`, values)
-      console.log('password updated successfully')
+      toast('Password updated successfully')
     } catch (error) {
-      console.log(error.message)
+      const err = error.response.data.msg
+      toast(err)
     }
   }
 
@@ -95,7 +98,12 @@ export function TabForm2() {
             </FormItem>
           )}
         />
-        <Button className="bg-[#F39B3B] hover:bg-orange-400 text-white rounded-lg" type="submit" disabled={!isDirty || !isValid} >{isSubmitting ? "Updating password..." : "Save"}</Button>
+        <Button className="bg-[#F39B3B] hover:bg-orange-400 text-white rounded-lg" type="submit" disabled={!isDirty || !isValid} >
+          {isSubmitting 
+            ? <div className="flex gap-3 items-center justify-center"><Oval visible={true} height="18" width="18" color="white" ariaLabel="oval-loading" /> <p>Updating Password...</p></div>
+            : <div>Save</div>
+          }
+        </Button>
       </form>
     </Form>
   )

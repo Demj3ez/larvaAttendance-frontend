@@ -18,6 +18,7 @@ import Image from "next/image"
 import Link from "next/link"
 import axios from "axios"
 import { useRouter } from "next/navigation"
+import { Oval  } from 'react-loader-spinner'
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -59,8 +60,8 @@ export function LoginForm() {
 
   return (
     <Form {...form}>
-      <div className="flex flex-col m-auto">
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 px-10 w-[417px] flex flex-col m-auto">
+      <div className="flex flex-col w-full m-auto">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 px-7 w-full tablet:w-[417px] flex flex-col m-auto">
         <div className="mb-3 space-y-3">
           <Image src="/images/larvaLogo.png" className="w-auto h-auto" alt="larva logo" width={100} height={100}/>
           <h1 className="font-semibold">Log in to your account</h1>          
@@ -89,9 +90,14 @@ export function LoginForm() {
             </FormItem>
           )}
         />
-        <Button className="bg-[#F39B3B] hover:bg-orange-400 text-white rounded-lg" type="submit" disabled={!isDirty || !isValid} >{isSubmitting ? "Loading..." : "Log in as Tutor"}</Button>
+        <Button className="bg-[#F39B3B] hover:bg-orange-400 text-white rounded-lg" type="submit" disabled={!isDirty || !isValid} >
+          {isSubmitting 
+            ? <div className="flex gap-3 items-center justify-center"><Oval visible={true} height="18" width="18" color="white" ariaLabel="oval-loading" /> <p>Loading...</p></div>
+            : <div>Log in as Tutor</div>
+          }
+        </Button>
       </form>
-      <Link href={'/admin/login'} className="text-center text-xs hover:text-slate-600 text-black font-semibold mt-3">Admin</Link>
+      <Link href={'/admin'} className="text-center text-xs hover:text-slate-600 text-black font-semibold mt-3">Admin</Link>
       </div>
     </Form>
   )

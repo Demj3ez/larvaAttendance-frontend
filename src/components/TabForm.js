@@ -18,6 +18,8 @@ import { useEffect } from "react";
 import { User } from 'lucide-react';
 import { useUser } from './userContext';
 import axios from "axios";
+import { toast } from "sonner"
+import { Oval  } from 'react-loader-spinner'
 
 const formSchema = z.object({
   name: z.string({ message: "Enter your name" }),
@@ -41,9 +43,10 @@ export function TabForm() {
   const onSubmit = async (values) => {
     try {
       await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/tutor/${id}`, values)
-      console.log('updated successfully')
+      toast('updated successfully')
     } catch (error) {
-      console.log(error.message)
+      const err = error.response.data.msg
+      toast(`Couldn\'t update, try again ${err}`)
     }
   }
 
@@ -110,7 +113,12 @@ export function TabForm() {
             </FormItem>
           )}
         />
-        <Button className="bg-[#F39B3B] hover:bg-orange-400 text-white rounded-lg" type="submit" disabled={!isDirty || !isValid} >{isSubmitting ? "Updating..." : "Save"}</Button>
+        <Button className="bg-[#F39B3B] hover:bg-orange-400 text-white rounded-lg" type="submit" disabled={!isDirty || !isValid} >
+          {isSubmitting 
+            ? <div className="flex gap-3 items-center justify-center"><Oval visible={true} height="18" width="18" color="white" ariaLabel="oval-loading" /> <p>Updating...</p></div>
+            : <div>Save</div>
+          }
+        </Button>
       </form>
     </Form>
   )
