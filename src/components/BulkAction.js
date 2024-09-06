@@ -4,7 +4,7 @@ const BulkAction = () => {
  
   return (
     <Select>
-        <SelectTrigger className="w-[200px] bg-white shadow-md hover:bg-orange-50">
+        <SelectTrigger className="w-full laptop:w-[200px] bg-white shadow-md hover:bg-orange-50">
             <SelectValue placeholder="Bulk Action" />
         </SelectTrigger>
         <SelectContent className="bg-white">

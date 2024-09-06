@@ -21,7 +21,7 @@ const CourseFilter = () => {
     
   return (
     <Select onValueChange={handleCourseChange} defaultValue={searchParams.get('course')?.toString() || 'all'}>
-        <SelectTrigger className="w-[250px] bg-white shadow-md hover:bg-orange-50">
+        <SelectTrigger className="w-full laptop:w-[250px] bg-white shadow-md hover:bg-orange-50">
             <SelectValue placeholder="Select Course" />
         </SelectTrigger>
         <SelectContent className="bg-white">

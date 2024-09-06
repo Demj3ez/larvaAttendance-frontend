@@ -21,7 +21,7 @@ const CohortFilter = () => {
     
   return (
     <Select onValueChange={handleCohortChange} defaultValue={searchParams.get('cohort')?.toString() || 'all'}>
-        <SelectTrigger className="w-[180px] bg-white shadow-md hover:bg-orange-50">
+        <SelectTrigger className="w-full laptop:w-[180px] bg-white shadow-md hover:bg-orange-50">
             <SelectValue placeholder="Select Cohort" />
         </SelectTrigger>
         <SelectContent className="bg-white">
