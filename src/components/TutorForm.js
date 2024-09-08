@@ -13,21 +13,31 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { useEffect } from "react";
 import { User } from 'lucide-react';
+import axios from "axios";
+import { toast } from "sonner";
+import { Oval  } from 'react-loader-spinner';
 
 const formSchema = z.object({
   name: z.string({ message: "Enter your name" }),
+  email: z.string().email({ message: "Invalid email address" }),
   course: z.string({ message: "Enter your course" }),
+  password: z.string({ message: "Enter new password" }),
+  confirmpassword: z.string({ message: "Confirm your new password" }),
+}).refine((data)=> data.password === data.confirmpassword,{
+  message: "Passwords don't match",
+  path: ["confirmpassword"],
 })
 
 export function TutorForm() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      image: "",
       name: "",
+      email: "",
       course: "",
       password: "",
       confirmpassword: "",
@@ -37,9 +47,15 @@ export function TutorForm() {
   const { reset } = form
   const { isDirty, isValid, isSubmitting, isSubmitSuccessful } = form.formState
  
-  const onSubmit = (values) => {
-    console.log(values)
-
+  const onSubmit = async (values) => {
+    try {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tutor/register`, values)
+      console.log(res)
+      toast(`${res.data.newTutor.name} registered successfully`)
+    } catch (error) {
+      const err = error.response.data.msg
+      toast(`Registration failed ${err}`)
+    }
   }
 
   useEffect(()=>{
@@ -56,7 +72,7 @@ export function TutorForm() {
           <AvatarImage  src="https://github.com/shadcn.png" />
           <AvatarFallback className="bg-gray-100" ><User color="black" size={40} /></AvatarFallback>
         </Avatar>
-        <FormField
+        {/* <FormField
           control={form.control}
           name="image"
           render={({ field }) => (
@@ -67,7 +83,7 @@ export function TutorForm() {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         </div>
         <FormField
           control={form.control}
@@ -83,12 +99,36 @@ export function TutorForm() {
         />
         <FormField
           control={form.control}
-          name="course"
+          name="email"
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input className="bg-slate-100 rounded-md mb-2" placeholder="Course" {...field} />
+                <Input className="bg-slate-100 rounded-md" placeholder="Email" {...field} />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="course"
+          render={({ field }) => (
+            <FormItem>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger className="bg-slate-100 rounded-md mb-2">
+                      <SelectValue placeholder="Select Course" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent className="bg-slate-100">
+                    <SelectItem value="Cyber Security">Cyber Security</SelectItem>
+                    <SelectItem value="Data Analysis">Data Analysis</SelectItem>
+                    <SelectItem value="Frontend Development">Frontend Development</SelectItem>
+                    <SelectItem value="Backend Development">Backend Development</SelectItem>
+                    <SelectItem value="Mobile Development">Mobile Development</SelectItem>
+                    <SelectItem value="UIUX Design">UIUX Design</SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
@@ -117,7 +157,12 @@ export function TutorForm() {
             </FormItem>
           )}
         />
-        <Button className="bg-[#F39B3B] hover:bg-orange-400 text-white rounded-lg" type="submit" disabled={!isDirty || !isValid} >{isSubmitting ? "Loading..." : "Register"}</Button>
+        <Button className="bg-[#F39B3B] hover:bg-orange-400 text-white rounded-lg" type="submit" disabled={!isDirty || !isValid} >
+          {isSubmitting 
+            ? <div className="flex gap-3 items-center justify-center"><Oval visible={true} height="18" width="18" color="white" ariaLabel="oval-loading" /> <p>Registering...</p></div>
+            : <div>Register</div>
+          }
+        </Button>
       </form>
     </Form>
   )
